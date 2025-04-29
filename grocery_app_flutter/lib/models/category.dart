@@ -54,7 +54,7 @@ String: The type of the keys (e.g., "id", "name").
 dynamic: The type of the values — can be anything (int, String, bool, etc.).*/
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(id: json['id'], name: json['name'], seoUrl: json['seoURL']);
+    return Category(id: json['id'], name: json['name'], seoUrl: json['seoUrl']);
     /*The id of the Category comes from the id in the JSON, the name of the Category comes from the name in the JSON, and the seoUrl of the Category comes from the seoUrl in the JSON */
   }
 
