@@ -21,6 +21,9 @@ class MainScreenState extends State {
   //I will fetch the categories from the API here.
   @override
   void initState() {
+    //All products should be loaded when the screen first opens.
+    getProducts();
+    //
     getCategoriesFromApi();
     super.initState();
   }
@@ -147,6 +150,17 @@ The constructor only runs when the widget is created for the first time.
 
 In other words, it runs once when the widget is first added to the screen (before initState), and it does not run again when setState() is called.
 */
+      setState(() {
+        Iterable list = json.decode(response.body);
+        this.products =
+            list.map((product) => Product.fromJson(product)).toList();
+      });
+    });
+  }
+
+  //All products should be loaded when the screen first opens.
+  void getProducts() {
+    ProductApi.getProducts().then((response) {
       setState(() {
         Iterable list = json.decode(response.body);
         this.products =
