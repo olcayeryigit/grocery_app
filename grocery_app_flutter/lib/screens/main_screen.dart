@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:grocery_app_flutter/data/api/category_api.dart';
+import 'package:grocery_app_flutter/data/api/product_api.dart';
 import 'package:grocery_app_flutter/models/category.dart';
+import 'package:grocery_app_flutter/models/product.dart';
+import 'package:grocery_app_flutter/widgets/product_list_widget.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -14,6 +17,7 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State {
   List<Category> categories = [];
   List<Widget> categoryWidgets = [];
+  List<Product> products = [];
   //I will fetch the categories from the API here.
   @override
   void initState() {
@@ -38,6 +42,9 @@ class MainScreenState extends State {
               /*horizantal scroll*/
               child: Row(children: categoryWidgets),
             ),
+
+            //The product list widget that displays the products belonging to the selected category
+            ProductListWidget(products),
           ],
         ),
       ),
@@ -93,6 +100,7 @@ The toList() function is used because map() returns an Iterable, so we convert t
   List<Widget> getCategoryWidgets() {
     for (int i = 0; i < categories.length; i++) {
       categoryWidgets.add(getCategoryWidget(categories[i]));
+      //print(categories[i].name);
     }
     return categoryWidgets;
     //For each item in the categories list, a button widget is created and added to the categoryWidgets list, and this list is then returned.
@@ -100,15 +108,50 @@ The toList() function is used because map() returns an Iterable, so we convert t
 
   Widget getCategoryWidget(Category category) {
     return TextButton(
-      onPressed: () {},
+      //The process of displaying the products related to a category when that category is clicked.
+      //For this, we need to define a product list at the top.
+      onPressed: () {
+        //print(category.name);
+        getProductsByCategoryId(category);
+      },
 
       child: Text(category.name, style: TextStyle(color: Colors.red)),
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14.0),
+          borderRadius: BorderRadius.circular(15.0),
           side: BorderSide(color: Colors.black12),
         ),
       ),
     );
+  }
+
+  void getProductsByCategoryId(Category category) {
+    ProductApi.getProductsByCategoryId(category.id).then((response) {
+      // Why is State Management Done in the Parent Widget?
+      //The constructors of child widgets do not run again; only their build() method is called.
+      //Therefore, even if you add state to a child widget, that state can be unprotected or may miss updates.
+      //If the state is held in the parent widget (such as a StatefulWidget), data is passed down to child widgets (like props), and user interactions can be managed using setState() in the parent.
+      /*This approach is:
+Safer
+More manageable
+Better in terms of performance*/
+
+      /* 
+✅ build() Method Runs Again
+The build() method defines how the widget should appear on the screen.
+
+When setState() is called, build() is triggered again and the UI is updated.
+
+❌ constructor Does Not Run Again
+The constructor only runs when the widget is created for the first time.
+
+In other words, it runs once when the widget is first added to the screen (before initState), and it does not run again when setState() is called.
+*/
+      setState(() {
+        Iterable list = json.decode(response.body);
+        this.products =
+            list.map((product) => Product.fromJson(product)).toList();
+      });
+    });
   }
 }

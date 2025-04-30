@@ -3,7 +3,7 @@ class Product {
   int categoryId; // mutable
   String productName; // mutable
   String quantityPerUnit; // mutable
-  String unitPrice; // mutable
+  double unitPrice; // mutable
   int unitsInStock; // mutable
   //The reason I didn't use final is that the properties of Product need to be changeable when necessary.
   // Constructor
@@ -24,7 +24,9 @@ class Product {
       categoryId: json['categoryId'],
       productName: json['productName'],
       quantityPerUnit: json['quantityPerUnit'],
-      unitPrice: json['unitPrice'],
+      //With this version, the unitPrice field is safely converted to a double regardless of whether it comes as an int, double, or string
+      //First, we convert it to a string and then convert it to a double.
+      unitPrice: double.parse(json['unitPrice'].toString()),
       unitsInStock: json['unitsInStock'],
     );
   }
