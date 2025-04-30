@@ -21,18 +21,21 @@ class ProductListWidgetState extends State<ProductListWidget> {
 
   Widget buildProductList(BuildContext context) {
     return Expanded(
-      child: ListView.builder(
-        /*✅ Using State<ProductListWidget> gives access to the widget instance, so you can use widget.products to access its properties.
-      
-      ❌ If you just use State without a generic type, you cannot access the specific widget’s fields like products.
-      
-       */
-        //This structure is used in Flutter to establish the connection between the StatefulWidget and its corresponding widget.
-        itemCount: widget.products.length,
-        itemBuilder: (context, index) {
-          //print(widget.products[index].productName);
-          return Text(widget.products[index].productName);
-        },
+      child: GridView.count(
+        crossAxisCount: 2,
+        children: List.generate(
+          /*✅ Using State<ProductListWidget> gives access to the widget instance, so you can use widget.products to access its properties.
+        
+        ❌ If you just use State without a generic type, you cannot access the specific widget’s fields like products.
+        
+         */
+          //This structure is used in Flutter to establish the connection between the StatefulWidget and its corresponding widget.
+          widget.products.length,
+          (index) {
+            //print(widget.products[index].productName);
+            return Text(widget.products[index].productName);
+          },
+        ),
       ),
     );
   }
